@@ -18,6 +18,10 @@ router.post('/books', mid1.mid1,bookController.createBook)
 
 // get Book
 router.get('/books', mid1.mid1,bookController.getBook)
+
+//grt books with all reviews
+router.post("/books/:bookId",bookController.getBookWithreview)
+
 //update Book
 router.put('/books/:bookId', mid1.mid1,bookController.updateBook)
 
@@ -31,10 +35,9 @@ router.post('/books/:bookId/review',bookController.addReview)
 router.put('/books/:bookId/review/:reviewId',bookController.updateReview)
 
 //fdlkjf
-router.post('/check/:id',bookController.check)
+// router.post('/check/:id',bookController.check)
 
-//grt books with all reviews
-router.post("/books/:bookId",bookController.getBookWithreview)
+
 
 //delete
 router.delete('/books/:bookId/review/:reviewId',bookController.deleteReview)
