@@ -17,10 +17,10 @@ router.post('/login', userController.loginUser)
 router.post('/books', mid1.mid1,bookController.createBook)
 
 // get Book
-router.get('/books', mid1.mid1,bookController.getBook)
+router.get('/bookslist', mid1.mid1,bookController.getBook)
 
 //grt books with all reviews
-router.post("/books/:bookId",bookController.getBookWithreview)
+router.get("/Books/:bookId",mid1.mid1,bookController.getBookWithreview)
 
 //update Book
 router.put('/books/:bookId', mid1.mid1,bookController.updateBook)
