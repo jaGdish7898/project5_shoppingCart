@@ -6,7 +6,7 @@ const mongoose = require("mongoose")
 const reviewModel = require("../model/reviewModel")
 const ObjectId = mongoose.Types.ObjectId
 
-//----------------------------------------------Validation functions ------------------------------------------------------------------
+//----------------------------------------------Validation functions --------------------------------------------
 
 const isValid = function (value) {
     if (typeof value === 'undefined' || value === null) return false
@@ -21,8 +21,9 @@ const isValidRequestBody = function (requestBody) {
 const isValidObjectId = function(objectId) {
     return mongoose.Types.ObjectId.isValid(objectId)
  }
-//-------------------------------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
 
+                         //=================== API'S=====================//
 
 const createBook = async function (req, res) {
     try {
