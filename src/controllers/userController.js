@@ -39,7 +39,7 @@ const login = async (req, res) => {
 module.exports.login=login
 
 const createUser = async (req, res) => { 
-    console.log(req.body)
+   
     try {
         if(!validators.isValid(req.body)){
             return res.status(400).send({status:false,msg:"request body is emptey"})
@@ -51,18 +51,25 @@ const createUser = async (req, res) => {
         if(!validators.isValid(lname)){
             return res.status(400).send({status:false,msg:"lname is not valid"})
         }
+        email=email.trim()
         if(!validators.isValid(email)){
             return res.status(400).send({status:false,msg:"email is not valid"})
         }
         if(!validators.isValidEmailSyntax(email)){
             return res.status(400).send({status:false,msg:"email is not valid"})
         }
+        let isEmailExist=await userModel.findOne({email})
+        if(isEmailExist) return res.status(400).send({status:false,msg:`${email} already registered !!`})
+
         if(!validators.isValid(profileImage)){
             return res.status(400).send({status:false,msg:"profileImage is not valid"})
         }
         if(!validators.isValid(phone)){
             return res.status(400).send({status:false,msg:"phone is not valid"})
         }
+        let isPhoneExist=await userModel.findOne({phone})
+        if(isPhoneExist) return res.status(400).send({status:false,msg:`${phone} already registered !!`})
+
         if(!validators.isValid(password)){
             return res.status(400).send({status:false,msg:"password is not valid"})
         }
