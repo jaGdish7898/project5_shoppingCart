@@ -1,54 +1,84 @@
-const mongoose = require("mongoose")
-//const validator = require("validator")
+const mongoose = require('mongoose');
+
 const userSchema = new mongoose.Schema({
-    title: {
-        type: String,
-        required: true,
-        trim: true,
-        enum: ["Mr", "Mrs", "Miss"]
-    },
-    name: {
+
+    fname: {
         type: String,
         required: true,
         trim: true
     },
-    phone: {
+
+    lname: {
         type: String,
         required: true,
-        trim: true,
-        validate: {
-            validator: function (phone) {
-                return /^[6-9]\d{9}$/gi.test(phone)
-            }, message: 'Please fill a valid mobile number', isAsync: false
-        },
+        trim: true
+    },
+    
+    email: { // valid
+        type: String,
+        required: true,
+        lowercase: true,
         unique: true,
+        trim: true
     },
-    email: {
+
+    profileImage: { // s3 link
         type: String,
         required: true,
-        trim: true,
-        unique: true
+        trim: true
     },
-    password: {
+
+    phone: { // valid
         type: String,
         required: true,
-        trim: true,
-        minLen: [8,"Password length should not be less than 8"],
-        maxLen: [15,"Password length should not be greater than 15"]
+        unique: true,
+        trim: true
     },
+
+    password: {     // minlen 8, maxlen 15 // encrypted password
+        type: String,
+        required: true,
+        trim: true
+    },
+
     address: {
-        street: {
-            type: String,
-            trim: true,
+        shipping: {
+            street: {
+                type: String,
+                required: true,
+                trim: true
+            },
+            city: {
+                type: String,
+                required: true,
+                trim: true
+            },
+            pincode: {
+                type: Number,
+                required: true,
+                trim: true
+            },
         },
-        city: {
-            type: String,
-            trim: true,
-        },
-        pincode: {
-            type: String,
-            trim: true,
+        billing: {
+            street: {
+                type: String,
+                required: true,
+                trim: true
+            },
+            city: {
+                type: String,
+                required: true,
+                trim: true
+            },
+            pincode: {
+                type: Number,
+                required: true,
+                trim: true
+            },
         }
     },
-}, { timestamps: true })
-module.exports = mongoose.model('user', userSchema)
+},
+    { timestamps: true }
+)
+
+module.exports = mongoose.model('P5-User', userSchema)

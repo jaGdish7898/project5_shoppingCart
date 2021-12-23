@@ -1,12 +1,12 @@
 
 const jwt = require('jsonwebtoken')
-const mid1 = function (req, res, next) {
+const tokenCheacker = function (req, res, next) {
     try {
-        let token = req.headers['x-api-key']
+        let token = req.headers['user-login-key']
         if (!token) {
             return res.status(401).send({ status: false, msg: "no authentication token" })
         } else {
-            let decodeToken = jwt.verify(token, '16th-Dec-Project-Books')
+            let decodeToken = jwt.verify(token, 'the-legends-key')
             if (decodeToken) {
                 req.decodeToken = decodeToken
                 next()
@@ -17,9 +17,10 @@ const mid1 = function (req, res, next) {
         }
 
     } catch (error) {
+        console.log(error)
         res.status(500).send({ status: false, msg: error })
     }
 
 
 }
-module.exports.mid1=mid1
+module.exports.tokenCheacker=tokenCheacker
