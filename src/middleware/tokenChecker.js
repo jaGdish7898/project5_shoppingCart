@@ -2,7 +2,10 @@
 const jwt = require('jsonwebtoken')
 const tokenCheacker = function (req, res, next) {
     try {
-        let token = req.headers['user-login-key']
+        const BearerToken=req.headers.authorization   //BearerToken=(Bearer+tokenValue),seprated by space
+        let BearerTokenArr= BearerToken.split(" ")  
+        console.log(BearerTokenArr)                               //but we only need token
+        let token = BearerTokenArr[1]
         if (!token) {
             return res.status(401).send({ status: false, msg: "no authentication token" })
         } else {

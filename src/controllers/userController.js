@@ -42,15 +42,18 @@ module.exports.login=login
 const createUser = async (req, res) => { 
    
     try {
+        //console.log(req.body.data2)
         let requestBody=JSON.parse(req.body.data)
         let files=req.files
-        
-        const profilePicture = await aws.uploadFile(files[0])
+        //console.log(files)
+        if(files.length>0){
+            var profilePicture = await aws.uploadFile(files[0])
+        }
         
         if(!validators.isValid(requestBody)){
             return res.status(400).send({status:false,msg:"request body is emptey"})
         }
-        let {fname,lname,email,phone,password,address } =requestBody
+        let {fname,lname,email,phone,password,address } =requestBody 
         if(!validators.isValid(fname)){
             return res.status(400).send({status:false,msg:"fname is not valid"})
         }
@@ -79,7 +82,7 @@ const createUser = async (req, res) => {
         } 
         if(!validators.isValidPhoneSyntax(phone)){
             return res.status(400).send({status:false,msg:"phone syntax not matched"})
-        }
+        } 
         
         let isPhoneExist=await userModel.findOne({phone})
         if(isPhoneExist) return res.status(400).send({status:false,msg:`${phone} already registered !!`})
@@ -88,7 +91,7 @@ const createUser = async (req, res) => {
             return res.status(400).send({status:false,msg:"password is not valid"})
         }
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
+        const hashedPassword = await bcrypt.hash(password, salt);  
 
         if(!validators.isValid(address)){
             return res.status(400).send({status:false,msg:"address is not valid"})
@@ -130,12 +133,13 @@ const getuserById = async (req, res) => {
 module.exports.getuserById=getuserById
 
 
-const updateUserProfile = async (req, res) => {
+const updateUserProfile = async (req, res) => { 
     try {
         const requestBody = JSON.parse(req.body.data)
         let files=req.files
-        
-        const profilePicture = await aws.uploadFile(files[0])
+        if(files.length>0){
+            var profilePicture = await aws.uploadFile(files[0])
+        }
         
         if(!validators.isValid(requestBody)){
             return res.status(400).send({status:false,msg:"request body is emptey"})
