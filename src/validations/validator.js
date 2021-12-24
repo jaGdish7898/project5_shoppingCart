@@ -17,18 +17,24 @@ const isValidObjectId = function(objectId) {
  }
  module.exports.isValidObjectId=isValidObjectId
 
- const isValidMobileNum = function (value) {
+ const isValidPhoneSyntax = function (value) {
     if (!(/^[6-9]\d{9}$/.test(value))) {
         return false
     }
     return true
 }
-module.exports.isValidMobileNum=isValidMobileNum
+module.exports.isValidPhoneSyntax =isValidPhoneSyntax 
 
 isValidEmailSyntax=function(email){
     return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
 }
 module.exports.isValidEmailSyntax=isValidEmailSyntax
+
+const isValidUrlSyntax=(url)=>{
+    return /(:?^((https|http|HTTP|HTTPS){1}:\/\/)([\w@?^=%&amp;~+#-_.\/]+)+)$/.test(url)
+}
+module.exports.isValidUrlSyntax=isValidUrlSyntax
+
 
 
 
