@@ -3,6 +3,7 @@ const router = express.Router();
 
 
 const userController = require("../controllers/userController")
+const productController=require("../controllers/productController")
 
 const middleware=require("../middleware/tokenChecker")
 
@@ -15,6 +16,9 @@ router.post("/login",userController.login)
 router.get("/user/:userId/profile",middleware.tokenCheacker,userController.getuserById)
 //update user profile
 router.put("/user/:userId/profile",middleware.tokenCheacker,userController.updateUserProfile)
+
+//1) post products
+router.post("/products",productController.addProduct)
 
 
 

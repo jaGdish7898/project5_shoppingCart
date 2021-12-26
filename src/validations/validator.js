@@ -1,40 +1,55 @@
 const mongoose=require("mongoose")
-
+//func1
 const isValid = function (value) {
     if (typeof value === 'undefined' || value === null) return false
     if (typeof value === 'string' && value.trim().length === 0) return false
     return true;
 }
-module.exports.isValid=isValid
-
+//func2
 const isValidRequestBody = function (requestBody) {
     return Object.values(requestBody).length > 0
 }
-module.exports.isValidRequestBody=isValidRequestBody
-
+//func3
 const isValidObjectId = function(objectId) {
     return mongoose.Types.ObjectId.isValid(objectId)
  }
- module.exports.isValidObjectId=isValidObjectId
-
+//func4
  const isValidPhoneSyntax = function (value) {
     if (!(/^[6-9]\d{9}$/.test(value))) {
         return false
     }
     return true
 }
-module.exports.isValidPhoneSyntax =isValidPhoneSyntax 
-
-isValidEmailSyntax=function(email){
+//func5
+const isValidEmailSyntax=function(email){
     return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
 }
-module.exports.isValidEmailSyntax=isValidEmailSyntax
-
+//func6
 const isValidUrlSyntax=(url)=>{
     return /(:?^((https|http|HTTP|HTTPS){1}:\/\/)([\w@?^=%&amp;~+#-_.\/]+)+)$/.test(url)
 }
-module.exports.isValidUrlSyntax=isValidUrlSyntax
+const isValidPrice=(price)=>{
+    
+    if(!(price+0)===price){
+        return false
+    }
+    if(!/(:?^(\d+)([.]?\d+)?)$/.test(price)){
+        return false
+    }
+    return true
+}
 
+
+module.exports={
+    isValid,
+    isValidRequestBody,
+    isValidObjectId,
+    isValidPhoneSyntax,
+    isValidUrlSyntax,
+    isValidEmailSyntax,
+    isValidPrice,
+
+}
 
 
 
