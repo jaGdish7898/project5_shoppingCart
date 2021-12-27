@@ -20,8 +20,17 @@ router.put("/user/:userId/profile",middleware.tokenCheacker,userController.updat
 //1) post products
 router.post("/products",productController.addProduct)
 
+//2)get product by id
+router.get("/products/:productId",productController.getProductById)
 
+//3)get product by query
+router.get("/products",productController.getProductsByQuery)
 
+//4)update by id
+router.put("/products/:productId",productController.updateProduct)
+
+//5)delete product by id 
+router.delete("/products/:productId",productController.deleteBlogById)
 
 
 module.exports = router;

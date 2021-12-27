@@ -130,11 +130,7 @@ module.exports.getuserById = getuserById
 
 const updateUserProfile = async (req, res) => {
     try {
-        const requestBody = JSON.parse(req.body.data)
-        let files = req.files
-        if (files.length > 0) {
-            var profileImage = await aws.uploadFile(files[0])
-        }
+        
         if (!funcValidators.isValid(req.params.userId) || !funcValidators.isValidObjectId(req.params.userId)) {
             return res.status(404).send({ status: false, message: 'Provided userId is not valid' })
         }
@@ -145,10 +141,12 @@ const updateUserProfile = async (req, res) => {
         if ((req.decodeToken.userId ).toString()!== req.params.userId) {
             return res.status(404).send({ status: false, message: 'Authorization denide !!' })
         }
-
-        if (!funcValidators.isValidRequestBody(requestBody)) {
-            return res.status(400).send({ status: false, msg: "request body is emptey" })
+        const requestBody = JSON.parse(req.body.data)
+        let files = req.files
+        if (files.length > 0) {
+            var profileImage = await aws.uploadFile(files[0])
         }
+
         let { fname, lname, email, phone, password, address } = requestBody
 
         if (fname) {
@@ -266,3 +264,22 @@ module.exports.updateUserProfile = updateUserProfile;
 
 // module.exports.userLogin = userLogin;
 // module.exports.getuserById = getuserById;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
