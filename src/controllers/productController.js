@@ -8,16 +8,29 @@ const aws = require("./awsController")
 const addProduct = async (req, res) => {
 
   try {
-    let requestBody = JSON.parse(req.body.data)
+   
+
+  
+
+    let updateBody = req.body.data
     let files = req.files
 
-    if (files.length > 0) {
-      var productImage = await aws.uploadFile(files[0])
+    if (!(updateBody && files)) {
+      return res.status(404).send({ status: false, msg: "create request is empty" })
+    }
+    if (files) {
+      if (files.length > 0) {
+        var productImage = await aws.uploadFile(files[0])
+      }
     }
 
-    if (!funcValidators.isValidRequestBody(requestBody)) {
-      return res.status(400).send({ status: false, msg: "request body is emptey" })
+    if (updateBody) {
+      updateBody = JSON.parse(updateBody)
+      if (!funcValidators.isValidRequestBody(requestBody)) {
+        return res.status(400).send({ status: false, msg: "request body is emptey" })
+      }
     }
+    
     let { title, description, price, currencyId, currencyFormat, isFreeShipping, style, availableSizes, installments } = requestBody
 
     if (!funcValidators.isValid(title)) {
@@ -195,6 +208,7 @@ const updateProduct = async (req, res) => {
     if (updateBody) {
       updateBody = JSON.parse(updateBody)
     }
+    
     const { title, description, price, style, isFreeShipping, availableSizes, installments } = updateBody
 
     if (title) {
@@ -265,23 +279,21 @@ const updateProduct = async (req, res) => {
   }
 }
 
-const deleteBlogById = async (req, res) => {
-
+const deleteProductById = async (req, res) => {
+       
   try {
     if (!(funcValidators.isValid(req.params.productId) &&
       funcValidators.isValidObjectId(req.params.productId))) {
-      res.status(404).send({ status: false, msg: "productId is not valid" })
+     return res.status(404).send({ status: false, msg: "productId is not valid" })
     }
-    const isMatchFound = await productModel.findOne({ _id: req.params.productId, isDeleted: false })
-
-    if (!isMatchFound) return res.status(404).send({ status: false, msg: "no such blog exist" })
-
+  
+  
     const deletedProduct = await productModel.findOneAndUpdate({ _id: req.params.productId, isDeleted: false }, { isDeleted: true, deletedAt: new Date() }, { new: true })
 
     if (deletedProduct) {
-      res.status(200).send({ status: true, deletedProduct })
+      return res.status(200).send({ status: true, deletedProduct })
     } else {
-      res.status(404).send({ status: false, msg: "no such product exist" })
+      return res.status(404).send({ status: false, msg: "no such product exist" })
     }
   }
   catch (err) {
@@ -291,27 +303,12 @@ const deleteBlogById = async (req, res) => {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module.exports = {
   addProduct,
   getProductById,
   getProductsByQuery,
   updateProduct,
-  deleteBlogById
+  deleteProductById
 }
 
 

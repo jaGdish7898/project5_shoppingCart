@@ -139,7 +139,7 @@ const updateUserProfile = async (req, res) => {
         if(!user) return res.status(404).send({ status: false, msg: "profile not exist" })
 
         if ((req.decodeToken.userId ).toString()!== req.params.userId) {
-            return res.status(404).send({ status: false, message: 'Authorization denide !!' })
+            return res.status(400).send({ status: false, message: 'Authorization denide !!' })
         }
         const requestBody = JSON.parse(req.body.data)
         let files = req.files

@@ -4,9 +4,10 @@ const router = express.Router();
 
 const userController = require("../controllers/userController")
 const productController=require("../controllers/productController")
-
+const cartController=require("../controllers/cartController")
 const middleware=require("../middleware/tokenChecker")
 
+//------------------user--------------------------------------------//
 
 //user registration 
 router.post("/register",userController.createUser)
@@ -16,6 +17,9 @@ router.post("/login",userController.login)
 router.get("/user/:userId/profile",middleware.tokenCheacker,userController.getuserById)
 //update user profile
 router.put("/user/:userId/profile",middleware.tokenCheacker,userController.updateUserProfile)
+
+//------------------product--------------------------------------------//
+
 
 //1) post products
 router.post("/products",productController.addProduct)
@@ -30,7 +34,11 @@ router.get("/products",productController.getProductsByQuery)
 router.put("/products/:productId",productController.updateProduct)
 
 //5)delete product by id 
-router.delete("/products/:productId",productController.deleteBlogById)
+router.delete("/products/:productId",productController.deleteProductById)
+
+//------------------cart--------------------------------------------//
+
+router.post("/users/:userId/cart",middleware.tokenCheacker,cartController.addCart)
 
 
 module.exports = router;
