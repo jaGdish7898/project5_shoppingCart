@@ -38,7 +38,16 @@ router.delete("/products/:productId",productController.deleteProductById)
 
 //------------------cart--------------------------------------------//
 
+//1)add to cart
 router.post("/users/:userId/cart",middleware.tokenCheacker,cartController.addCart)
 
+//2)
+router.get("/users/:userId/cart",middleware.tokenCheacker,cartController.getCart)
+
+//3)
+router.delete("/users/:userId/cart",middleware.tokenCheacker,cartController.deleteCart)
+
+//4)updatecart
+router.put("/users/:userId/cart",middleware.tokenCheacker,cartController.updateCart)
 
 module.exports = router;

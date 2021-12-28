@@ -2,6 +2,9 @@
 const jwt = require('jsonwebtoken')
 const tokenCheacker = function (req, res, next) {
     try {
+        if(!req.headers.authorization){
+            return res.status(400).send({status:false,msg:"mandetory header is not present"})
+        }
         const BearerToken=req.headers.authorization   //BearerToken=(Bearer+tokenValue),seprated by space
         let BearerTokenArr= BearerToken.split(" ")    //but we only need token
         let token = BearerTokenArr[1]
