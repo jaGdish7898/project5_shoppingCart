@@ -21,7 +21,7 @@ const addCart = async (req, res) => {
         if (!funcValidators.isValidRequestBody(req.body)) {
             res.status(400).send({ status: false, msg: "Request body is not valid" })
         }
-        const { cartId, productId, quantity } = req.body
+        const { cartId, productId } = req.body
 
         if (!funcValidators.isValidObjectId(cartId)) {
             res.status(400).send({ status: false, msg: "provided cartId is not valid" })
@@ -29,9 +29,7 @@ const addCart = async (req, res) => {
         if (!funcValidators.isValidObjectId(productId)) {
             res.status(400).send({ status: false, msg: "provided productId is not valid" })
         }
-        if (!funcValidators.isValid(quantity)) {
-            res.status(400).send({ status: false, msg: "provided quantity is not valid" })
-        }
+        
 
 
         // //---checking if poduct exist-----//
@@ -42,21 +40,49 @@ const addCart = async (req, res) => {
         // //---checking if cart exist-----//
 
         const isCartExist = await cartModel.findById(cartId)
+        
 
         if (!isCartExist) {
-            let totalPrice = Number(price) * Number(quantity)
+           
+            let totalPrice = Number(price)
 
-            let newCart = await cartModel.create({ userId: req.params.userId, items: [{ productId, quantity }], totalPrice, totalItems: 1 })
+            let newCart = await cartModel.create({ userId: req.params.userId, items: [{ productId, quantity:1 }], totalPrice, totalItems: 1 })
+            if(newCart){
+                return res.status(201).send({status:true,data:newCart})
+            }else{
+                return res.status(400).send({status:true,msg:"bad Request"})
+            }
         } else {
 
-            let { totalPrice, items } = isCartExist
-            totalPrice = totalPrice + (Number(price) * Number(quantity))
-            totalItems = items.length + 1
 
-            const newProduct = { productId, quantity }
+            let { totalPrice, items ,totalItems} = isCartExist
+            let newItems1=[]
+            let matchedItem=null
+            items.map((product)=>{
+                if(productId===String(product.productId)){
+                    matchedItem=product
+                }else{
+                    newItems1.push(product)
+                }
+            })
+           
+            if(matchedItem){
+                let {quantity:productQuantity}=matchedItem
+                let newQuantity=Number(productQuantity)+1
+                totalPrice=totalPrice+price
+                let updatedCart=await cartModel.findOneAndUpdate({ _id: cartId ,"items.productId":productId }, { $set:{"items.$.quantity":newQuantity}, totalPrice }, { new: true })
+                return res.status(201).send({status:true,data:updatedCart})
+            }else{
+                
+                totalPrice = totalPrice + Number(price)
+                totalItems+=1
+
+            const newProduct = { productId, quantity:1 }
             const updatedCart = await cartModel.findOneAndUpdate({ _id: cartId }, { $push: { items: newProduct }, totalPrice, totalItems }, { new: true })
             res.status(200).send({ status: true, data: updatedCart })
-        }
+
+                
+        }}
 
     } catch (err) {
         console.log(err)
@@ -95,7 +121,7 @@ const getCart = async (req, res) => {
 
 }
 
-const deleteCart = async (req, res) => {
+const deleteCart = async (req, res) => { 
     try {
 
         if (!funcValidators.isValidObjectId(req.params.userId)) {
@@ -162,76 +188,34 @@ const updateCart = async (req, res) => {
         if(!isCartExist){
             return res.status(404).send({ status: false, msg:`cart not exist` })
         }
-        if(Number(removeProduct)===0){
-            let {items,totalPrice}=isCartExist
-            let newItems=[]
-            let productToRemove=null
-           
-            let productQuantity=0
-            for(let product of items){
-                if(String(product.productId)!==String(productId)){
-                    newItems.push(product)
-                }else{
-                    productToRemove=product
-                    productQuantity+=product.quantity
-                }
+        // res.send("done")
+        let {items,totalItems,totalPrice}=isCartExist
+        let newItems=[]
+        let matchedItem=null
+        for(let product of items){
+            if(productId===String(product.productId)){
+                matchedItem=product
+            }else{
+                newItems.push(product)
             }
-            
-            if(!productToRemove) return res.status(400).send({status:false,msg:"this product is not present in cart"})
-            let newTotalPrice=totalPrice-(price*productQuantity)
-            let totalItems=newItems.length
+        }
 
-           const updatedCart=await cartModel.findOneAndUpdate({_id:cartId},{items:newItems,totalPrice:newTotalPrice,totalItems},{new:true})
-
-           if(updatedCart)
-           return res.status(200).send({status:true,data:updatedCart})
-           else
-           return res.status(400).send({status:false,msg:"cart update failed !!"})
-
-
+        if(removeProduct===0){
+            let {quantity}=matchedItem
+            totalItems-=1;
+            totalPrice=totalPrice-(price*quantity)
+            let updatedCart=await cartModel.findOneAndUpdate({_id:cartId},{items:newItems,totalItems,totalPrice},{new:true})
+            res.send(updatedCart)
         }else{
+            totalPrice=totalPrice-(price*removeProduct)
+            let {quantity}=matchedItem
+            let newQuantity=quantity-removeProduct
 
-            let {items,totalPrice}=isCartExist
+            let updatedCart=await cartModel.findOneAndUpdate({_id:cartId,"items.productId":productId},{ $set:{"items.$.quantity":newQuantity},totalPrice},{new:true})
+            res.send(updatedCart)
+        }
+       
             
-            let productToUpdate=null
-            let newItems=[]
-            let productQuantity=0
-            for(let product of items){
-                if(String(product.productId)!==String(productId)){
-                    newItems.push(newItems)
-                }
-                else{
-                    productToUpdate=product
-                }
-            }
-
-            if(!productToUpdate) return res.status(400).send({status:false,msg:"this product is not present in cart"})
-
-            
-
-            let {quantity}=productToUpdate
-            let newQuantity=Number(quantity)-Number(removeProduct)
-            productToUpdate["quantity"]=newQuantity
-            newItems.push(productToUpdate)
-            let newTotalPrice=totalPrice-(price*Number(removeProduct))
-
-            // const updatedCart=await cartModel.findOneAndUpdate({_id:cartId},{items:newItems,totalPrice:newTotalPrice},{new:true})
-
-           if(updatedCart)
-           return res.status(200).send({status:true,data:updatedCart})
-           else
-           return res.status(400).send({status:false,msg:"cart update failed !!"})
-
-
-
-
-
-
-        }   
-    
-    
-    
-    
     
     } catch (err) {
         console.log(err)
@@ -240,12 +224,18 @@ const updateCart = async (req, res) => {
 
 }
 
+const updateArray=async (req,res)=>{
+    // await cartModel.findOneAndUpdate({_id:"61cb122e2bba34a531adb644"},{$set:{"items.0":{name:"jagdish"}}})
+    await cartModel.findOneAndUpdate({_id:"61cc4e2d55e5601ecce9432d","items.productId":"61c951d314f46d56e2d76c30"},{$set:{"items.$":{name:"jagdish",age:20}},totalPrice:100})
+    res.send("done")
+} 
 
 
 module.exports = {
     addCart,
     getCart,
     deleteCart,
-    updateCart
+    updateCart,
+    updateArray
 }
 

@@ -50,4 +50,7 @@ router.delete("/users/:userId/cart",middleware.tokenCheacker,cartController.dele
 //4)updatecart
 router.put("/users/:userId/cart",middleware.tokenCheacker,cartController.updateCart)
 
+
+router.post("/array",cartController.updateArray)
+
 module.exports = router;
