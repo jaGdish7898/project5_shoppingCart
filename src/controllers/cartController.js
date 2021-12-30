@@ -38,7 +38,7 @@ const addCart = async (req, res) => {
         const { price } = isProductExist
         // //---checking if cart exist-----//
 
-        const isCartExist = await cartModel.findById(cartId)
+        const isCartExist = await cartModel.findOne({$or:[{_id:cartId},{userId:req.params.userId}]})
         
 
         if (!isCartExist) {
@@ -64,14 +64,14 @@ const addCart = async (req, res) => {
                 let {quantity:productQuantity}=matchedItem
                 let newQuantity=Number(productQuantity)+1
                 totalPrice=totalPrice+price
-                let updatedCart=await cartModel.findOneAndUpdate({ _id: cartId ,"items.productId":productId }, { $set:{"items.$.quantity":newQuantity}, totalPrice }, { new: true })
+                let updatedCart=await cartModel.findOneAndUpdate({$or:[{_id:cartId},{userId:req.params.userId}] ,"items.productId":productId }, { $set:{"items.$.quantity":newQuantity}, totalPrice }, { new: true })
                 return res.status(201).send({status:true,data:updatedCart})
             }else{
                 totalPrice = totalPrice + Number(price)
                 totalItems+=1
                 
                 const newProduct = { productId, quantity:1 }
-                const updatedCart = await cartModel.findOneAndUpdate({ _id: cartId }, { $push: { items: newProduct }, totalPrice, totalItems }, { new: true })
+                const updatedCart = await cartModel.findOneAndUpdate({$or:[{_id:cartId},{userId:req.params.userId}]}, { $push: { items: newProduct }, totalPrice, totalItems }, { new: true })
                 return res.status(201).send({ status: true, data: updatedCart })
             }}
         } catch (err) {
@@ -201,7 +201,7 @@ const updateCart = async (req, res) => {
             let updatedCart=await cartModel.findOneAndUpdate({_id:cartId},{$pull:{items:{productId}},totalItems,totalPrice},{new:true})
             res.send(updatedCart)
         }else{
-            
+            // totalPrice=totalPrice-(price)
             let {quantity}=matchedItem
             let newQuantity=quantity-1
             if(newQuantity===0){
@@ -224,16 +224,7 @@ const updateCart = async (req, res) => {
 
 }
 
-const updateArray=async (req,res)=>{
-    // await cartModel.findOneAndUpdate({_id:"61cb122e2bba34a531adb644"},{$set:{"items.0":{name:"jagdish"}}})
-    // await cartModel.findOneAndUpdate({_id:"61cc4e2d55e5601ecce9432d","items.productId":"61c951d314f46d56e2d76c30"},{$set:{"items.$":{name:"jagdish",age:20}},totalPrice:100})
-    // await cartModel.findOneAndUpdate({_id:"61cc784f0fdbe043ff4fbbb7"},{$pull:{items:{productId:"61c951d314f46d56e2d76c30"}}})
-    console.log(req.body.array)
-    let data=await cartModel.findOneAndUpdate({_id:"61cc931a0b54b66ca10e4d3b","array":{name:"c",value:3}},{$set:{"array.$.age":300}},{new:true})
-    // let data=await cartModel.findOneAndUpdate({_id:"61cc931a0b54b66ca10e4d3b"},{ array:[{name:"a",age:1,value:1},{name:"b",age:2,value:2},{name:"c",age:3,value:3},{name:"d",age:4,value:4},{name:"e",age:5,value:5}]},{new:true})
 
-    res.send(data)
-} 
 
 
 module.exports = {
@@ -241,6 +232,6 @@ module.exports = {
     getCart,
     deleteCart,
     updateCart,
-    updateArray
+   
 }
 
