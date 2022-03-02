@@ -1,3 +1,4 @@
+
 const aws = require("aws-sdk");
 //---------------------------------------AWS CONNECTION---------------------------------------------------//
 
@@ -17,8 +18,8 @@ let uploadFile = async (file) => {
     let s3 = new aws.S3({ apiVersion: "2006-03-01" });
     var uploadParams = {
       ACL: "public-read", // this file is publically readable
-      Bucket: "classroom-training-bucket", // HERE
-      Key: "js_newFolder/"+ file.originalname, // HERE    "pk_newFolder/harry-potter.png" pk_newFolder/harry-potter.png
+      Bucket: "classroom-training-bucket",
+      Key: "js_newFolder/"+ file.originalname, 
       Body: file.buffer, 
     };
 
