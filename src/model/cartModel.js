@@ -10,6 +10,7 @@ const cartSchema = new mongoose.Schema({
         unique: true,
         trim: true
     },
+    //
 
     items: [{
         _id:false,
